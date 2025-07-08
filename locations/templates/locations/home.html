@@ -1,0 +1,44 @@
+{% extends 'locations/base.html' %}
+
+{% block title %}Home - My Blog{% endblock %}
+
+{% block content %}
+    <h2>📚 Posts</h2>
+    <ul class="list-group">
+        {% for post in posts %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></strong> — {{ post.content }}
+                    {% if post.image %}
+                      <div>
+                          <img src="{{ post.image.url }}" alt="Post Image" style="max-width: 400px; height:auto; margin-top: 10px;">
+                      </div>
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="text-muted">Posted by {{ post.author.username }}</p>
+                    {% if post.author == user %}
+                        <a href="{% url 'edit_post' post.pk %}" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                    {% endif %}
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No posts found.</li>
+        {% endfor %}
+
+        <div class="pagination">
+            {% if posts.has_previous %}
+                <a href="?page=1">« First</a>
+                <a href="?page={{ posts.previous_page_number }}">‹ Previous</a>
+            {% endif %}
+
+            <span>Page {{ posts.number }} of {{ posts.paginator.num_pages }}</span>
+
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}">Next ›</a>
+                <a href="?page={{ posts.paginator.num_pages }}">Last »</a>
+            {% endif %}
+        </div>
+    </ul>
+{% endblock %}
